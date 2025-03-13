@@ -18,7 +18,7 @@ resource "azurerm_network_manager_connectivity_configuration" "main-spoke-conf" 
     network_group_id   = azurerm_network_manager_network_group.main-spoke-network-group.id
   }
   hub {
-    resource_id   = azurerm_virtual_network.hub-vnets[0].id
+    resource_id   = azurerm_virtual_network.vnets["main-hub-vnet-01"].id
     resource_type = "Microsoft.Network/virtualNetworks"
   }
 }
@@ -32,7 +32,7 @@ resource "azurerm_network_manager_connectivity_configuration" "secondary-spoke-c
     network_group_id   = azurerm_network_manager_network_group.secondary-spoke-network-group.id
   }
   hub {
-    resource_id   = azurerm_virtual_network.hub-vnets[1].id
+    resource_id   = azurerm_virtual_network.vnets["secondary-hub-vnet-01"].id
     resource_type = "Microsoft.Network/virtualNetworks"
   }
 

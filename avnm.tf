@@ -28,22 +28,22 @@ resource "azurerm_network_manager_network_group" "secondary-spoke-network-group"
 }
 
 resource "azurerm_network_manager_static_member" "hub-members" {
-  count                     = 2
-  name                      = "hub-members${count.index}"
+  for_each                  = var.hub-vnets
+  name                      = each.key
   network_group_id          = azurerm_network_manager_network_group.hub-network-group.id
-  target_virtual_network_id = azurerm_virtual_network.hub-vnets[count.index].id
+  target_virtual_network_id = azurerm_virtual_network.vnets[each.key].id
 }
 
 resource "azurerm_network_manager_static_member" "main-spoke-members" {
-  count                     = 2
-  name                      = "main-spoke-members${count.index}"
+  for_each                  = var.main-spoke-vnets
+  name                      = each.key
   network_group_id          = azurerm_network_manager_network_group.main-spoke-network-group.id
-  target_virtual_network_id = azurerm_virtual_network.main-spoke-vnets[count.index].id
+  target_virtual_network_id = azurerm_virtual_network.vnets[each.key].id
 }
 
 resource "azurerm_network_manager_static_member" "secondary-spoke-members" {
-  count                     = 3
-  name                      = "secondary-spoke-members${count.index}"
+  for_each                  = var.secondary-spoke-vnets
+  name                      = each.key
   network_group_id          = azurerm_network_manager_network_group.secondary-spoke-network-group.id
-  target_virtual_network_id = azurerm_virtual_network.secondary-spoke-vnets[count.index].id
+  target_virtual_network_id = azurerm_virtual_network.vnets[each.key].id
 }

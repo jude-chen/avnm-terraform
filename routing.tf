@@ -28,7 +28,7 @@ resource "azapi_resource" "routing-rule-collections" {
           networkGroupId = each.value
         }
       ]
-      disableBgpRoutePropagation = "true"
+      disableBgpRoutePropagation = "True"
     }
   }
 }

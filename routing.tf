@@ -55,3 +55,24 @@ resource "azapi_resource" "default-routing-rules" {
   }
 }
 
+resource "terraform_data" "deploy-routing-config" {
+  for_each = {
+    main      = var.main_location,
+    secondary = var.secondary_location
+  }
+
+  triggers_replace = [
+    azapi_resource.default-routing-rules[each.key].body.properties.destination.destinationAddress,
+    azapi_resource.default-routing-rules[each.key].body.properties.nextHop.nextHopAddress
+  ]
+
+  # https://learn.microsoft.com/en-us/powershell/module/az.network/deploy-aznetworkmanagercommit?view=azps-13.3.0#example-3
+  provisioner "local-exec" {
+    command     = "$regions = @(\"${each.value}\"); $configIds = @(\"${azapi_resource.routing-confs[each.key].id}\"); Deploy-AzNetworkManagerCommit -ResourceGroupName ${azurerm_resource_group.avnm-rg.name} -Name ${azurerm_network_manager.my-avnm.name} -TargetLocation $regions -CommitType \"Routing\" -ConfigurationId $configIds"
+    interpreter = ["pwsh", "-Command"]
+  }
+
+  depends_on = [
+    azapi_resource.default-routing-rules
+  ]
+}
